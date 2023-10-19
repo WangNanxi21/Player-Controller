@@ -1,0 +1,42 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float pushForce = 10f; // Adjust the force as needed
+    private Rigidbody playerRigidbody;
+
+    void Start()
+    {
+        playerRigidbody = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        // Handle player input (e.g., using Input.GetAxis) to move the character
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        playerRigidbody.AddForce(movement * pushForce);
+    }
+
+    // Implement OnTriggerEnter to detect when the player collides with pushable objects
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Pushable"))
+        {
+            Rigidbody pushableObjectRigidbody = other.GetComponent<Rigidbody>();
+            
+            if (pushableObjectRigidbody != null)
+            {
+                // Calculate the push direction based on player's forward vector
+                Vector3 pushDirection = transform.forward;
+                
+                // Apply force to the pushable object in the push direction
+                pushableObjectRigidbody.AddForce(pushDirection * pushForce);
+            }
+        }
+    }
+}
